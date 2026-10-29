@@ -1,0 +1,7 @@
+:root { --ki-primary: #f97316; --ki-background: #f6f7fb; --ki-surface: #ffffff; --ki-text: #172033; --ki-muted: #6b7280; --ki-border: #e5e7eb; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, system-ui, sans-serif; color: var(--ki-text); background: var(--ki-background); }
+button, input { font: inherit; }
+.ki-card { background: var(--ki-surface); border: 1px solid var(--ki-border); border-radius: 16px; padding: 1.25rem; }
+.ki-page { padding: 1.5rem; }
+

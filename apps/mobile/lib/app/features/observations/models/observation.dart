@@ -1,0 +1,2 @@
+class Observation { const Observation({required this.id, required this.rawText, required this.status, this.brand, this.price}); final int id; final String rawText; final String status; final String? brand; final double? price; factory Observation.fromJson(Map<String, dynamic> json) => Observation(id: json['id'] as int, rawText: json['raw_text'] as String? ?? '', status: json['status'] as String? ?? 'pending', brand: json['brand'] as String?, price: (json['price'] as num?)?.toDouble()); }
+

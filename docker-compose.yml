@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: kicks_insight
+      POSTGRES_USER: kicks
+      POSTGRES_PASSWORD: kicks
+    ports:
+      - "5432:5432"
+    volumes:
+      - kicks-postgres:/var/lib/postgresql/data
+
+  api:
+    build: ./services/api
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+
+volumes:
+  kicks-postgres:
+
