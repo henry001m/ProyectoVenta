@@ -9,6 +9,7 @@ const routes: Routes = [
     { path: 'dashboard', loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule) },
     { path: 'observations', loadChildren: () => import('./features/observations/observations.module').then(m => m.ObservationsModule) },
     { path: 'sources', loadChildren: () => import('./features/sources/sources.module').then(m => m.SourcesModule) },
+    { path: 'whatsapp', loadChildren: () => import('./features/whatsapp/whatsapp.module').then(m => m.WhatsAppModule) },
     { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   ] },
   { path: '**', redirectTo: 'auth' },

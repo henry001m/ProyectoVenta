@@ -96,3 +96,59 @@ class MarketSummary(BaseModel):
     demand_signals: int
     sale_signals: int
 
+
+class WhatsAppAccountCreate(BaseModel):
+    display_phone_number: str | None = Field(default=None, max_length=40)
+
+
+class WhatsAppAccountOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    waba_id: str
+    phone_number_id: str
+    display_phone_number: str | None
+    status: str
+
+
+class WhatsAppContactOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    wa_id: str
+    phone_number: str | None
+    display_name: str | None
+
+
+class WhatsAppConversationOut(BaseModel):
+    id: int
+    contact: WhatsAppContactOut
+    last_message_at: datetime | None
+    last_customer_message_at: datetime | None
+    unread_count: int
+    last_message_preview: str | None = None
+    last_message_type: str | None = None
+    last_message_direction: str | None = None
+
+
+class WhatsAppMessageOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    meta_message_id: str
+    direction: str
+    message_type: str
+    body: str
+    status: str
+    timestamp: datetime
+    media_id: str | None
+
+
+class WhatsAppSendRequest(BaseModel):
+    type: Literal["text", "image", "document", "audio", "template"] = "text"
+    text: str | None = Field(default=None, max_length=4096)
+    media_id: str | None = None
+    media_url: str | None = None
+    caption: str | None = Field(default=None, max_length=1024)
+    filename: str | None = Field(default=None, max_length=255)
+    template_name: str | None = Field(default=None, max_length=255)
+    language_code: str = "es"
+    template_components: list[dict] = Field(default_factory=list)
+

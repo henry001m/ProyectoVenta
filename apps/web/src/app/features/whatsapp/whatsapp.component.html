@@ -1,0 +1,37 @@
+<section class="wa-page" [class.has-chat]="selected">
+  <aside class="wa-sidebar" aria-label="Conversaciones de WhatsApp">
+    <div class="sidebar-heading">
+      <div><p class="eyebrow">MENSAJERÍA</p><h1>WhatsApp</h1></div>
+      <span class="connection-state" [class.disconnected]="!accountConnected"><i class="pi" [class.pi-check-circle]="accountConnected" [class.pi-exclamation-circle]="!accountConnected" aria-hidden="true"></i> {{ accountChecking ? 'Verificando' : accountConnected ? 'Conectado' : 'Desconectado' }}</span>
+    </div>
+    <button type="button" class="connect-button" *ngIf="!accountChecking && !accountConnected" [disabled]="accountConnecting" (click)="connectConfiguredAccount()">{{ accountConnecting ? 'Conectando…' : 'Conectar número configurado' }}</button>
+    <p class="list-state error" *ngIf="accountError" role="alert">{{ accountError }}</p>
+    <label class="search-box"><i class="pi pi-search" aria-hidden="true"></i><span class="sr-only">Buscar conversaciones o mensajes</span><input type="search" [ngModel]="search" (ngModelChange)="onSearch($event)" placeholder="Buscar conversaciones" /></label>
+    <div class="filter-row"><button type="button" class="filter-button" [class.active]="!unreadOnly" (click)="unreadOnly = false; loadConversations()">Todas</button><button type="button" class="filter-button" [class.active]="unreadOnly" (click)="toggleUnread()">No leídas</button></div>
+    <div class="list-state" *ngIf="loadingConversations" role="status">Cargando conversaciones…</div>
+    <div class="list-state error" *ngIf="conversationsError" role="alert">{{ conversationsError }}</div>
+    <div class="list-state empty" *ngIf="!loadingConversations && !conversationsError && conversations.length === 0">{{ search || unreadOnly ? 'No hay resultados para este filtro.' : 'Aquí aparecerán los chats que reciba WhatsApp Cloud API.' }}</div>
+    <div class="conversation-list" *ngIf="conversations.length">
+      <button type="button" class="conversation" *ngFor="let conversation of conversations" [class.selected]="selected?.id === conversation.id" [attr.aria-pressed]="selected?.id === conversation.id" (click)="selectConversation(conversation)">
+        <span class="avatar" aria-hidden="true">{{ contactName(conversation).slice(0, 1).toUpperCase() }}</span>
+        <span class="conversation-copy"><span class="conversation-top"><strong>{{ contactName(conversation) }}</strong><time *ngIf="messageTime(conversation.last_message_at) as time">{{ time | date:'shortTime' }}</time></span><span class="conversation-bottom"><span class="preview">{{ conversation.last_message_direction === 'outbound' ? 'Tú: ' : '' }}{{ conversation.last_message_preview || 'Sin mensajes' }}</span><span class="unread-count" *ngIf="conversation.unread_count">{{ conversation.unread_count }}</span></span></span>
+      </button>
+    </div>
+    <p class="scope-note">Solo conversaciones individuales entregadas a tu cuenta empresarial por Meta. No incluye chats personales ni grupos.</p>
+  </aside>
+
+  <main class="wa-chat" *ngIf="selected; else noSelection">
+    <header class="chat-heading"><button type="button" class="back-button" (click)="backToList()" aria-label="Volver a conversaciones"><i class="pi pi-arrow-left"></i></button><span class="avatar" aria-hidden="true">{{ contactName(selected).slice(0, 1).toUpperCase() }}</span><div class="chat-contact"><strong>{{ contactName(selected) }}</strong><span>{{ selected.contact.wa_id }}</span></div><span class="business-badge"><i class="pi pi-briefcase"></i> Cliente</span></header>
+    <div class="messages" #messageLog role="log" aria-live="polite" aria-label="Mensajes de la conversación">
+      <p class="system-note">Los mensajes se sincronizan desde WhatsApp Cloud API.</p>
+      <div class="list-state" *ngIf="loadingMessages" role="status">Cargando mensajes…</div>
+      <div class="list-state error" *ngIf="messagesError" role="alert">{{ messagesError }}</div>
+      <p class="list-state empty" *ngIf="!loadingMessages && !messagesError && messages.length === 0">Todavía no hay mensajes guardados.</p>
+      <article class="message" *ngFor="let message of messages" [class.outbound]="message.direction === 'outbound'">
+        <p>{{ message.body || '[' + message.message_type + ']' }}</p><footer><time>{{ message.timestamp | date:'shortTime' }}</time><span *ngIf="message.direction === 'outbound'">{{ message.status }}</span></footer>
+      </article>
+    </div>
+    <div class="composer-area"><p class="send-error" *ngIf="sendError" role="alert">{{ sendError }}</p><form class="composer" (ngSubmit)="send()"><label class="sr-only" for="wa-reply">Escribe un mensaje</label><textarea id="wa-reply" name="reply" [(ngModel)]="draft" rows="1" maxlength="4096" placeholder="Escribe un mensaje" (keydown.enter)="$event.preventDefault(); send()"></textarea><button type="submit" class="send-button" [disabled]="sending || !draft.trim() || !accountConnected" [attr.aria-label]="sending ? 'Enviando mensaje' : 'Enviar mensaje'"><i class="pi" [class.pi-send]="!sending" [class.pi-spin]="sending" [class.pi-spinner]="sending"></i></button></form><small>El envío está sujeto a las reglas de WhatsApp y a la ventana de atención.</small></div>
+  </main>
+  <ng-template #noSelection><main class="wa-chat no-selection"><div class="welcome"><div class="welcome-icon"><i class="pi pi-whatsapp"></i></div><h2>Tu bandeja de WhatsApp</h2><p>Selecciona una conversación para ver los mensajes y responder.</p><span>Los datos provienen exclusivamente de WhatsApp Cloud API.</span></div></main></ng-template>
+</section>

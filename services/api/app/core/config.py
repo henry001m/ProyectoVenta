@@ -15,8 +15,13 @@ class Settings(BaseSettings):
     openai_api_key: str | None = None
     openai_model: str = "gpt-4o-mini"
     whatsapp_verify_token: str | None = None
+    whatsapp_app_secret: str | None = None
     whatsapp_access_token: str | None = None
+    whatsapp_waba_id: str | None = None
     whatsapp_phone_number_id: str | None = None
+    whatsapp_business_account_id: str | None = None
+    whatsapp_api_version: str = "v26.0"
+    whatsapp_webhook_url: str | None = None
     tiktok_client_key: str | None = None
     tiktok_client_secret: str | None = None
     meta_client_id: str | None = None
